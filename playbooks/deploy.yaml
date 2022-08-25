@@ -20,9 +20,9 @@
         mode : 0775
         recurse : yes
 
-      - name : download tomcat
-        ansible.builtin.unarchive:
-          src: "{{TOMCAT_URL}}"
-          dest: "{{TOMCAT_PATH}}"
-          remote_src: yes
-        become_user : "{{USERNAME}}"
+    - name : download tomcat
+      ansible.builtin.unarchive:
+        src: "{{TOMCAT_URL}}"
+        dest: "{{TOMCAT_PATH}}"
+        remote_src: yes
+      become_user : "{{USERNAME}}"
