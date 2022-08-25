@@ -1,6 +1,7 @@
 ---
 - name : deploying package
   hosts : PROD
+  become :
   vars : 
     USERNAME : tom_user
     TOMCAT_PATH : /tomcat
