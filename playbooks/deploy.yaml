@@ -44,4 +44,4 @@
       get_url :
         url : "{{WAR_URL}}"
         dest : "{{WAR_PACK}}"
-      become_user :      
+      become_user : "{{USERNAME}}"
