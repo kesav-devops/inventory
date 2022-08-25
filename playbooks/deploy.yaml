@@ -13,7 +13,7 @@
 
     - name : create a directory for tomcat
       file : 
-        path : "{{/tomcat}}"
+        path : "{{TOMCAT_PATH}}"
         state : directory
         owner : "{{USERNAME}}"
         group : "{{USERNAME}}"
