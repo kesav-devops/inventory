@@ -5,7 +5,7 @@
   vars : 
     USERNAME : tom_user
     TOMCAT_PATH : /tomcat
-    TOMCAT_URL : 
+    TOMCAT_URL : https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.65/bin/apache-tomcat-9.0.65.tar.gz
   tasks :
     - name : creating tomcat user
       ansible.builtin.user:
@@ -19,4 +19,10 @@
         group : "{{USERNAME}}"
         mode : 0775
         recurse : yes
-         
+
+      - name : download tomcat
+        ansible.builtin.unarchive:
+          src: "{{TOMCAT_URL}}"
+          dest: "{{TOMCAT_PATH}}"
+          remote_src: yes
+        become_user : "{{USERNAME}}"
