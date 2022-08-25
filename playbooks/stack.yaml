@@ -1,0 +1,107 @@
+---
+- name : create web layer
+  hosts : PROD
+  become : yes
+  vars : 
+    MOD_JK_URL : https://dlcdn.apache.org/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.48-src.tar.gz
+  tasks :
+
+    - name: define the mod_jk src dir vars
+      shell: echo  "{{MOD_JK_URL}}" | awk -F / '{print $NF}' | sed 's/.tar.gz//'
+      register: output
+
+    - name: create MOD_JK_SRC variable
+      set_fact:
+        MOD_JK_SRC: "{{output.stdout}}"   
+
+    - name: print MOD_JK_SRC
+      debug:
+        msg: "{{MOD_JK_SRC}}"
+
+    - name : Installing httpd and its dependent packages
+      ansible.builtin.yum : 
+        name : "{{item.name}}"
+        state : "{{item.state}}"
+      loop :
+        - { name: 'httpd', state: 'latest'}
+        - { name: 'gcc', state: 'latest'}
+        - { name: 'make', state: 'latest'}
+        - { name: 'httpd-devel', state: 'latest'}   
+
+    - name : start web service
+      ansible.builtin.service :
+        name : httpd
+        state : started        
+
+    - name : Extracting mod_jk
+      ansible.builtin.unarchive :
+        src : "{{MOD_JK_URL}}"
+        dest : /opt/ 
+        remote_src : yes
+
+    - name: get the statistics of modjk.so
+      stat:
+        path: /etc/httpd/modules
+      register: st
+
+    - name : compile mod_jk
+      ansible.builtin.shell: "{{item}}"
+      args:
+        chdir: "/opt/{{MOD_JK_SRC}}/native"
+      loop : 
+        - ./configure --with-apxs=/bin/apxs
+        - make
+        - make install
+      when : st.stat.exists == false  
+      
+    - name: mod_jk.so status checking
+      debug:
+        msg: " mod_jk.so file exists "
+      when : st.stat.exists == true    
+
+    - name : creating mod_jk.conf
+      copy:
+        content: |
+                  LoadModule jk_module modules/mod_jk.so
+                  JkWorkersFile conf.d/workers.properties
+                  JkLogFile logs/mod_jk.log
+                  JkLogLevel info
+                  JkLogStampFormat "[%a %b %d %H:%M:%S %Y]"
+                  JkOptions +ForwardKeySize +ForwarNdURICompat -ForwardDirectories
+                  JkRequestLogFormat "%w %V %T"
+                  JkMount /LoginApp tomcatA
+                  JkMount /LoginApp/* tomcatA
+        dest: /etc/httpd/conf.d/mod_jk.conf
+
+    - name: Insert/update "Match User" configuration block in /etc/httpd/conf.d/workers.properties
+      ansible.builtin.blockinfile:
+        path: /etc/httpd/conf.d/workers.properties
+        block: |
+                worker.list=tomcatA
+                worker.tomcatA.type=ajp13
+                worker.tomcatA.host=10.128.0.5
+                worker.tomcatA.port=8009
+        create : yes       
+
+    - name: deploying static web
+      copy: 
+        content: |
+                   <!DOCTYPE html>
+                   <!DOCTYPE html>
+                   <html> 
+                   <body>  
+                   <h1> welcome to kartikeya soft devops training</h1>
+                   <h1 style="background-color:Tomato;">Tomato</h1>
+                   <h1 style="background-color:Orange;">Orange</h1>
+                   <h1 style="background-color:DodgerBlue;">DodgerBlue</h1>
+                   <h1 style="background-color:MediumSeaGreen;">MediumSeaGreen</h1>
+                   <h1 style="background-color:Gray;">Gray</h1>
+                   <h1 style="background-color:SlateBlue;">SlateBlue</h1>
+                   <h1 style="background-color:Violet;">Violet</h1>
+                   <h1 style="background-color:LightGray;">LightGray</h1>
+                   </body>
+                   </html>
+
+        dest: /var/www/html/index.html
+
+
