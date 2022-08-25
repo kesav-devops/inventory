@@ -1,0 +1,21 @@
+---
+- name : deploying package
+  hosts : PROD
+  vars : 
+    USERNAME : tom_user
+    TOMCAT_PATH : /tomcat
+    TOMCAT_URL : 
+  tasks :
+    - name : creating tomcat user
+      ansible.builtin.user:
+      name : "{{USERNAME}}"
+
+    - name : create a directory for tomcat
+      file : 
+        path : "{{/tomcat}}"
+        state : directory
+        owner : "{{USERNAME}}"
+        group : "{{USERNAME}}"
+        mode : 0775
+        recurse : yes
+         
