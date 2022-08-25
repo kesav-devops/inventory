@@ -6,6 +6,7 @@
     USERNAME : tom_user
     TOMCAT_PATH : /tomcat
     TOMCAT_URL : https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.65/bin/apache-tomcat-9.0.65.tar.gz
+    WAR_PATH : /tomcat/apache-tomcat-9.0.65/webapps
   tasks :
     - name : creating tomcat user
       ansible.builtin.user:
@@ -26,3 +27,13 @@
         dest: "{{TOMCAT_PATH}}"
         remote_src: yes
       become_user : "{{USERNAME}}"
+    
+    - name: remove files and directories
+      file:
+        state: "{{item}}"
+        path: "{{WAR_PATH}}"
+        owner: "{{USERNAME}}"
+        group: "{{USERNAME}}"
+      with_items:
+        - absent
+        - directory
