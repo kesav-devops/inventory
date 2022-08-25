@@ -9,7 +9,7 @@
   tasks :
     - name : creating tomcat user
       ansible.builtin.user:
-      name : "{{USERNAME}}"
+        name : "{{USERNAME}}"
 
     - name : create a directory for tomcat
       file : 
