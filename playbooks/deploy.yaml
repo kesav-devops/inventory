@@ -7,7 +7,7 @@
     TOMCAT_PATH : /tomcat
     TOMCAT_URL : https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.65/bin/apache-tomcat-9.0.65.tar.gz
     WAR_PATH : /tomcat/apache-tomcat-9.0.65/webapps
-    WAR_URL : http://3.110.179.142:8081/repository/maven-snapshots/com/ksapp/ks/6-SNAPSHOT/ks-6-20220824.113938-2.war
+    WAR_URL : http://13.233.11.164:8081/repository/maven-snapshots/com/ksapp/ks/6-SNAPSHOT/ks-6-20220824.113938-2.war
     WAR_PACK : /tomcat/apache-tomcat-9.0.65/webapps/ks.war
   tasks :
     - name : creating tomcat user
