@@ -45,3 +45,16 @@
         url : "{{WAR_URL}}"
         dest : "{{WAR_PACK}}"
       become_user : "{{USERNAME}}"
+
+    - name : check tomcat running or not
+      shell : ps -ef | grep tomcat | grep -v grep
+      register: out
+
+    - name : restart tomcat
+      shell : "nohup sh /tomcat/apache-tomcat-9.0.65/bin/shudown.sh && nohup sh /tomcat/apache-tomcat-9.0.65/bin/startup.sh"
+      when: out.rc ==0
+
+    - name : start tomcat
+      shell : "nohup sh /tomcat/apache-tomcat-9.0.65/bin/startup.sh"
+      when : out.rc !=0  
+    
