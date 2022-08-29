@@ -51,8 +51,9 @@
       register: out
 
     - name : restart tomcat
-      shell : "nohup sh /tomcat/apache-tomcat-9.0.65/bin/shudown.sh && nohup sh /tomcat/apache-tomcat-9.0.65/bin/startup.sh"
+      shell : "nohup sh /tomcat/apache-tomcat-9.0.65/bin/shutdown.sh && nohup sh /tomcat/apache-tomcat-9.0.65/bin/startup.sh"
       when: out.rc ==0
+      ignore_errors : true
 
     - name : start tomcat
       shell : "nohup sh /tomcat/apache-tomcat-9.0.65/bin/startup.sh"
