@@ -42,7 +42,7 @@
 
     - name : deploying war package
       get_url :
-        url : "{{WARURL}}"
+        url : "{{WAR_URL}}"
         dest : "{{WAR_PACK}}"
       become_user : "{{USERNAME}}"
 
